@@ -48,7 +48,6 @@ class _HomePageState extends State<HomePage> {
       storage.remove("token");
       storage.remove("name");
       storage.remove("id");
-      storage.remove("area");
 
       Navigator.pushReplacementNamed(context, "/login");
     }

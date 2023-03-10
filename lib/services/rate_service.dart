@@ -31,7 +31,6 @@ class RateService {
       List<Task> list_task = [];
       List<Tonase> list_tonase = [];
       List<PocketMoney> list_pocket_money = [];
-      List<Lokasi> temp_lokasi = [];
 
       var key_lokasi = data["lokasi"].keys.toList();
 
@@ -41,10 +40,11 @@ class RateService {
         list_pocket_money.add(PocketMoney.fromJson({
           "perusahaan": saku["asal"].toString(),
           "purpose": saku["keterangan"].toString(),
-          "ammount": saku["nominal"].toString(),
+          // "ammount": saku["nominal"].toString(),
+          "ammount": data["total_uang_saku"],
           "type": saku["status"].toString(),
           "status": "",
-          "id": ""
+          "id": saku["id"].toString()
         }));
       }
 
@@ -58,7 +58,7 @@ class RateService {
       }
 
       list_tonase.add(Tonase.fromJson(
-          {"keterangan": "Total", "jumlah": data["tonase_kirim"] + " kg"}));
+          {"keterangan": "Total", "jumlah": data["total_tonase"] + " kg"}));
 
       var key_detail = data["detail"].keys.toList();
 
@@ -72,38 +72,41 @@ class RateService {
           List<TaskItem> list_task_item = [];
           var key_task_item = task["items"][key_sj[j]].keys.toList();
 
-          for (var k = 0; k < key_task_item.length; k++) {
-            var task_item = task["items"][key_sj[j]][key_task_item[k]];
-            print("123 ${task_item["lokasi"]}");
+          for (var k = 0; k < key_task_item.length; k++) {}
 
-            var lokasi = task_item["lokasi"];
+          var task_item = task["items"][key_sj[j]];
+          var lokasi = task_item["lokasi"];
 
-            List<Lokasi> list_lokasi = [];
+          List<Lokasi> list_lokasi = [];
 
-            for (var x = 0; x < key_lokasi.length; x++) {
-              list_lokasi.add(Lokasi.fromJson({
-                "lokasi": data["lokasi"][key_lokasi[x]]["nama_lokasi"],
-                "same": false
-              }));
-            }
-
-            for (var y = 0; y < lokasi.length; y++) {
-              for (var z = 0; z < list_lokasi.length; z++) {
-                if (list_lokasi[z].lokasi == lokasi[y]["nama_lokasi"]) {
-                  list_lokasi[z].same = true;
-                }
-              }
-            }
-
-            list_task_item.add(TaskItem.fromJson({
-              "item": task_item["nama_item"],
-              "weight": task_item["tonase"].toString(),
-              "list_lokasi": list_lokasi
-            }));
+          for (var q = 0; q < lokasi.length; q++) {
+            list_lokasi.add(Lokasi.fromJson(
+                {"lokasi": lokasi[q]["nama_lokasi"], "same": false}));
           }
 
+          // for (var x = 0; x < key_lokasi.length; x++) {
+          //   list_lokasi.add(Lokasi.fromJson({
+          //     "lokasi": data["lokasi"][key_lokasi[x]]["nama_lokasi"],
+          //     "same": false
+          //   }));
+          // }
+
+          // for (var y = 0; y < lokasi.length; y++) {
+          //   for (var z = 0; z < list_lokasi.length; z++) {
+          //     if (list_lokasi[z].lokasi == lokasi[y]["nama_lokasi"]) {
+          //       list_lokasi[z].same = true;
+          //     }
+          //   }
+          // }
+
+          list_task_item.add(TaskItem.fromJson({
+            "item": task_item["nama_item"],
+            "weight": task_item["tonase"].toString(),
+            "list_lokasi": list_lokasi
+          }));
+
           list_sj.add(SJ.fromJson({
-            "no": key_sj[j],
+            "no": task["sj"][j],
             "list_task": list_task_item,
             "total_item": "",
             "total_weight": ""
@@ -132,9 +135,9 @@ class RateService {
         "nopol": data["nopol"],
         "armada": data["jenis_armada"],
         "sopir": data["nama_sopir"],
-        "tonase_kirim": data["tonase_kirim"] + " kg",
+        "tonase_kirim": data["total_tonase"] + " kg",
         "rate": data["rate"].toString(),
-        "kapasitas": value.format(data["kapasitas"]).toString(),
+        "kapasitas": data["kapasitas"],
         "kernet": data["nama_kernet"],
         "total_sj": data["total_sj"],
         "status_kapasitas": data["status_kapasitas"],

@@ -14,11 +14,7 @@ class AuthService {
       "key": API.apiKey,
     };
 
-    print("loading....");
-
     var response = await http.post(Uri.parse(url), body: body);
-
-    print("login response ${response.statusCode}");
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

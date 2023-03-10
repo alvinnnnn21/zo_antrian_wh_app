@@ -50,15 +50,15 @@ class _RatePageState extends State<RatePage> {
     Map<String, dynamic> data =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
-    handlePocketMoneySign() async {
+    handlePocketMoneySign(id) async {
       setState(() {
         isLoading = true;
       });
 
       final token = storage.read("token");
-
       dynamic response = await rateProvider.ActionUangSaku(
-          token: token, type: "sign", id: data["id"]);
+          token: token, type: "sign", id: int.parse(id));
+
       setState(() {
         isLoading = false;
       });
@@ -83,7 +83,7 @@ class _RatePageState extends State<RatePage> {
       }
     }
 
-    handlePocketMoneyReject() async {
+    handlePocketMoneyReject(id) async {
       setState(() {
         isLoading = true;
       });
@@ -91,7 +91,7 @@ class _RatePageState extends State<RatePage> {
       final token = storage.read("token");
 
       dynamic response = await rateProvider.ActionUangSaku(
-          token: token, type: "reject", id: data["id"]);
+          token: token, type: "reject", id: int.parse(id));
 
       setState(() {
         isLoading = false;
@@ -107,9 +107,6 @@ class _RatePageState extends State<RatePage> {
                 Text("Berhasil Reject Rate", textAlign: TextAlign.center)));
 
         Navigator.pop(context);
-        Navigator.pop(context);
-
-        // Navigator.popAndPushNamed(context, "/home", arguments: data["id"]);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color(0xffff0000),
@@ -120,7 +117,7 @@ class _RatePageState extends State<RatePage> {
       }
     }
 
-    showAlertDialog(BuildContext context) {
+    showAlertDialog(BuildContext context, id) {
       AlertDialog alert = AlertDialog(
         title: Text("Konfirmasi"),
         content: Text("Apakah kamu yakin untuk melakukan reject ?"),
@@ -131,7 +128,8 @@ class _RatePageState extends State<RatePage> {
               height: 35,
               fontSize: 15,
               onPressed: () {
-                handlePocketMoneyReject;
+                Navigator.pop(context);
+                handlePocketMoneyReject(id);
               },
               bgColor: Color(0xff00b212),
               borderColor: Color(0xff00b212),
@@ -226,7 +224,7 @@ class _RatePageState extends State<RatePage> {
                                                                         .map((item3) =>
                                                                             Container(
                                                                               margin: EdgeInsets.symmetric(horizontal: 2),
-                                                                              child: Text(item3.lokasi, style: TextStyle(color: Color(item3.same == true ? 0xff338bf6 : 0xffB8B8B8))),
+                                                                              child: Text(item3.lokasi, style: TextStyle(color: Color(0xff338bf6))),
                                                                             ))
                                                                         .toList()),
                                                               ),
@@ -361,8 +359,10 @@ class _RatePageState extends State<RatePage> {
                                                               width: 100,
                                                               height: 35,
                                                               fontSize: 15,
-                                                              onPressed:
-                                                                  handlePocketMoneySign,
+                                                              onPressed: () {
+                                                                handlePocketMoneySign(
+                                                                    item.id);
+                                                              },
                                                               bgColor: Color(
                                                                   0xff00b212),
                                                               borderColor: Color(
@@ -379,7 +379,8 @@ class _RatePageState extends State<RatePage> {
                                                               //     handlePocketMoneyReject,
                                                               onPressed: () {
                                                                 showAlertDialog(
-                                                                    context);
+                                                                    context,
+                                                                    item.id);
                                                               },
                                                               bgColor: Color(
                                                                   0xffff0000),
