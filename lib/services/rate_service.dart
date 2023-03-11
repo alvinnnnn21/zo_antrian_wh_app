@@ -20,6 +20,8 @@ class RateService {
     var body = {"id": id.toString(), "id_area": API.getArea()};
     var headers = {'Authorization': 'Bearer $token'};
 
+    print('token $body');
+
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 

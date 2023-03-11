@@ -24,6 +24,7 @@ class WorkInProgressProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
+      print("error : $e");
       return e.toString().replaceAll("Exception:", "");
     }
   }

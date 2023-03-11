@@ -71,11 +71,13 @@ class WorkInProgressService {
           int total_weight = 0;
 
           for (var k = 0; k < key_task_item.length; k++) {
-            var task_item = task["items"][key_sj[j]][key_task_item[k]];
+            var task_item = task["items"][key_sj[j]];
+
+            print("task_item ${key_task_item.length}");
 
             list_task_item.add(TaskItem.fromJson({
               "item": task_item["nama_item"],
-              "weight": task_item["tonase"].toString() + "kg",
+              "weight": task_item["tonase"] + "kg",
               "list_lokasi": []
             }));
 

@@ -36,12 +36,21 @@ class _RatePageState extends State<RatePage> {
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     final String token = storage.read("token");
-    await Provider.of<RateProvider>(context, listen: false)
+    dynamic response = await Provider.of<RateProvider>(context, listen: false)
         .GetRate(token: token, id: data["id"]);
 
     setState(() {
       isLoading = false;
     });
+
+    if (response != true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Color(0xffff0000),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+          duration: Duration(seconds: 3),
+          content: Text(response, textAlign: TextAlign.center)));
+    }
   }
 
   @override
