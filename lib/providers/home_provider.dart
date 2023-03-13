@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/home_model.dart';
 import 'package:sutindo_supir_app/services/home_service.dart';

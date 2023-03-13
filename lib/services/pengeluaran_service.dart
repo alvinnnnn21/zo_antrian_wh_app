@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:sutindo_supir_app/api.dart';
@@ -20,8 +22,10 @@ class PengeluaranService {
 
       List<PocketMoney> list_pocket_money = [];
 
-      for (var i = 0; i < data["uangSaku"].length; i++) {
-        var item = data["uangSaku"][i];
+      var key_uang_saku = data["uangSaku"].keys.toList();
+
+      for (var i = 0; i < key_uang_saku.length; i++) {
+        var item = data["uangSaku"][key_uang_saku[i]];
 
         if (item["nominal"].toString()[0] == "-") {
           list_pocket_money.add(PocketMoney.fromJson({
@@ -37,8 +41,8 @@ class PengeluaranService {
 
       Pengeluaran pengeluaran = Pengeluaran.fromJson({
         "total_pengeluaran": data["total_pengeluaran"].toString(),
-        "total_uang_saku": data["total_uang_saku"].toString(),
-        "total_saldo": data["sisa_saldo"].toString(),
+        "total_uang_saku": data["totalUangSaku"].toString(),
+        "total_saldo": data["sisaUangSaku"].toString(),
         "list_pocket_money": list_pocket_money
       });
 

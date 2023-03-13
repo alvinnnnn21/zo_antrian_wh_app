@@ -80,7 +80,7 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
     int id = ModalRoute.of(context)!.settings.arguments as int;
 
     handleUpdateProgress(String progress, String keterangan, String id,
-        String customer, int index) async {
+        String customer, int index, int no_urut) async {
       setState(() {
         isLoading = true;
       });
@@ -92,7 +92,8 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
           progress: progress,
           keterangan: keterangan,
           id: id,
-          customer: customer);
+          customer: customer,
+          no_urut: no_urut);
 
       setState(() {
         isLoading = false;
@@ -118,7 +119,8 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
       }
     }
 
-    handleHapusRute(String keterangan, String id, String customer) async {
+    handleHapusRute(
+        String keterangan, String id, String customer, String no_urut) async {
       setState(() {
         isLoading = true;
       });
@@ -126,7 +128,11 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
       final token = storage.read("token");
 
       dynamic response = await workProvider.HapusRute(
-          token: token, keterangan: keterangan, id: id, customer: customer);
+          token: token,
+          keterangan: keterangan,
+          id: id,
+          customer: customer,
+          no_urut: no_urut);
 
       setState(() {
         isLoading = false;
@@ -193,8 +199,6 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
       } else {
         return true;
       }
-
-      return true;
     }
 
     Widget CustomCheckbox(String label, bool isChecked, bool isDisabled,
@@ -261,9 +265,13 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(task.perusahaan,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700)),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      child: Text(task.perusahaan,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700)),
+                                    ),
                                     Text(task.status,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700))
@@ -315,9 +323,13 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(task.perusahaan,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w700)),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.5,
+                                      child: Text(task.perusahaan,
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w700)),
+                                    ),
                                     Text(task.status,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700))
@@ -440,14 +452,15 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                                           textColor:
                                                               Colors.white,
                                                           onPressed: () {
-                                                            print(123);
                                                             handleHapusRute(
                                                                 list_controller[
                                                                         int.parse(index) -
                                                                             1]
                                                                     .text,
                                                                 id.toString(),
-                                                                task.perusahaan);
+                                                                task.perusahaan,
+                                                                task.no_urut
+                                                                    .toString());
                                                           },
                                                           fontSize: 12,
                                                           height: 30,
@@ -485,7 +498,8 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                                             .text,
                                                         id.toString(),
                                                         task.perusahaan,
-                                                        int.parse(index) - 1);
+                                                        int.parse(index) - 1,
+                                                        task.no_urut);
                                                   },
                                                   fontSize: 15,
                                                   height: 40,
@@ -501,8 +515,6 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
         ),
       );
     }
-
-    print(list_progress);
 
     return Scaffold(
         backgroundColor: Colors.white,

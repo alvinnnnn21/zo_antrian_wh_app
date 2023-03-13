@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Input extends StatelessWidget {
   String label = "";
   bool obscureText = false;
+  String type = "";
   TextEditingController controller = TextEditingController();
   Function() onPressed = () {};
 
@@ -13,6 +14,7 @@ class Input extends StatelessWidget {
       {Key? key,
       required this.label,
       this.obscureText = false,
+      this.type = "text",
       required this.controller,
       this.width = 250,
       this.height = 30})
@@ -31,6 +33,8 @@ class Input extends StatelessWidget {
             TextFormField(
                 obscureText: obscureText,
                 // validator: validator,
+                keyboardType:
+                    type == "text" ? TextInputType.text : TextInputType.number,
                 controller: controller,
                 decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(10),

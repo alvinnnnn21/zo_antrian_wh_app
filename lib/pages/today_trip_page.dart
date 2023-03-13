@@ -172,6 +172,8 @@ class _TodayTripPageState extends State<TodayTripPage> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold)),
                                     Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: todayTripProvider
                                           .today.list_pocket_money
                                           .asMap()

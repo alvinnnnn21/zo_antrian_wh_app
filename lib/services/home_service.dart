@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:sutindo_supir_app/api.dart';
@@ -12,7 +14,6 @@ class HomeService {
     var url2 = '${API.baseURL}get-today-trip';
     var headers = {'Authorization': 'Bearer $token'};
     var body = {"token": token, "id_area": API.getArea()};
-
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 

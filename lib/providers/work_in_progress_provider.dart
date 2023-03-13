@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/work_in_progress_model.dart';
 import 'package:sutindo_supir_app/services/work_in_progress_service.dart';
@@ -23,8 +25,9 @@ class WorkInProgressProvider extends ChangeNotifier {
       notifyListeners();
 
       return true;
-    } catch (e) {
-      print("error : $e");
+    } catch (e, stacktrace) {
+      print("error : ${e.toString()}");
+      print("error : ${stacktrace.toString()}");
       return e.toString().replaceAll("Exception:", "");
     }
   }
@@ -49,30 +52,38 @@ class WorkInProgressProvider extends ChangeNotifier {
       required String keterangan,
       required String id,
       required String customer,
-      required String progress}) async {
+      required String progress,
+      required int no_urut}) async {
     try {
       bool response = await WorkInProgressService().UpdateProgress(
           token: token,
           progress: progress,
           keterangan: keterangan,
           id: id,
-          customer: customer);
+          customer: customer,
+          no_urut: no_urut);
 
       return true;
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print("error : $e");
+      print("error : $stacktrace");
       return e.toString().replaceAll("Exception:", "");
     }
   }
 
-  Future<dynamic> HapusRute({
-    required String token,
-    required String keterangan,
-    required String id,
-    required String customer,
-  }) async {
+  Future<dynamic> HapusRute(
+      {required String token,
+      required String keterangan,
+      required String id,
+      required String customer,
+      required String no_urut}) async {
     try {
       bool response = await WorkInProgressService().HapusRute(
-          token: token, keterangan: keterangan, id: id, customer: customer);
+          token: token,
+          keterangan: keterangan,
+          id: id,
+          customer: customer,
+          no_urut: no_urut);
 
       return true;
     } catch (e) {
@@ -91,7 +102,6 @@ class WorkInProgressProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print(e);
       return e.toString().replaceAll("Exception:", "");
     }
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -39,8 +41,6 @@ class WorkInProgressService {
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
-      final value = NumberFormat("#,##0", "en_US");
-
       List<Task> list_task = [];
       List<PocketMoney> list_pocket_money = [];
 
@@ -61,34 +61,31 @@ class WorkInProgressService {
 
       for (var i = 0; i < key_detail.length; i++) {
         var task = data["detail"][key_detail[i]];
-        var key_sj = task["items"].keys.toList();
+        var key_sj = task["sj"].keys.toList();
 
         List<SJ> list_sj = [];
 
         for (var j = 0; j < key_sj.length; j++) {
+          // var task_item = task["sj"][key_sj[j]][key_sj[j]];
+          var key_task_item = task["sj"][key_sj[j]].keys.toList();
+
           List<TaskItem> list_task_item = [];
-          var key_task_item = task["items"][key_sj[j]].keys.toList();
-          int total_weight = 0;
 
           for (var k = 0; k < key_task_item.length; k++) {
-            var task_item = task["items"][key_sj[j]];
-
-            print("task_item ${key_task_item.length}");
+            var task_item = task["sj"][key_sj[j]][key_task_item[k]];
 
             list_task_item.add(TaskItem.fromJson({
               "item": task_item["nama_item"],
               "weight": task_item["tonase"] + "kg",
               "list_lokasi": []
             }));
-
-            total_weight = (total_weight + task_item["tonase"]) as int;
           }
 
           list_sj.add(SJ.fromJson({
             "no": key_sj[j],
             "list_task": list_task_item,
             "total_item": list_task_item.length.toString(),
-            "total_weight": total_weight.toString() + "kg",
+            "total_weight": task["total_tonase"].toString() + "kg",
           }));
         }
 
@@ -106,7 +103,8 @@ class WorkInProgressService {
           "batal": task["batal"] ?? "-",
           "progress_eksternal": task["progress_eksternal"],
           "is_show": false,
-          "is_enable": false
+          "is_enable": false,
+          "no_urut": task["no_urut"]
         }));
       }
 
@@ -130,7 +128,7 @@ class WorkInProgressService {
         "sopir": data["nama_sopir"],
         "tonase_kirim": data["tonase_kirim"] + " kg",
         "rate": "Rate " + data["rate"].toString(),
-        "kapasitas": value.format(data["kapasitas"]).toString(),
+        "kapasitas": data["kapasitas"],
         "kernet": data["nama_kernet"],
         "total_sj": data["total_sj"],
         "total_item": data["total_jumlah"],
@@ -184,14 +182,16 @@ class WorkInProgressService {
       required String keterangan,
       required String id,
       required String customer,
-      required String progress}) async {
+      required String progress,
+      required int no_urut}) async {
     var url = '${API.baseURL}update-progress';
     var body = {
       "id": id,
       "keterangan": keterangan,
       progress: "1",
       "customer": customer,
-      "id_area": API.getArea()
+      "id_area": API.getArea(),
+      "no_urut": no_urut.toString()
     };
 
     var headers = {'Authorization': 'Bearer $token'};
@@ -216,10 +216,12 @@ class WorkInProgressService {
       {required String token,
       required String keterangan,
       required String id,
-      required String customer}) async {
+      required String customer,
+      required String no_urut}) async {
     var url = '${API.baseURL}hapus-rute';
     var body = {
       "id": id,
+      "no_urut": no_urut,
       "keterangan": keterangan,
       "customer": customer,
       "id_area": API.getArea()

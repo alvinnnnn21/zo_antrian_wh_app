@@ -165,7 +165,9 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
                                                                             "nominal":
                                                                                 item.ammount,
                                                                             "purpose":
-                                                                                item.purpose
+                                                                                item.purpose,
+                                                                            "total_uang_saku":
+                                                                                pengeluaranProvider.pengeluaran.total_saldo
                                                                           }).then(
                                                                           (_) =>
                                                                               {
@@ -217,8 +219,11 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
                                             arguments: {
                                               "idWip": id,
                                               "type": "input",
-                                              "from": "/detail-pengeluaran"
-                                            });
+                                              "from": "/detail-pengeluaran",
+                                              "total_uang_saku":
+                                                  pengeluaranProvider
+                                                      .pengeluaran.total_saldo
+                                            }).then((_) => {getInit()});
                                       },
                                       bgColor: Color(0xffff0000),
                                       borderColor: Color(0xffff0000),

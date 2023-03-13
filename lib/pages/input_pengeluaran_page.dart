@@ -33,6 +33,8 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
     Map<String, dynamic> data =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
+    print("data $data");
+
     if (data["type"] == "edit") {
       nominalController.text = data["nominal"];
       keteranganController.text = data["purpose"];
@@ -53,31 +55,47 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
 
       final token = storage.read("token");
 
-      dynamic response = await workProvider.AddPocketMoney(
-          token: token,
-          nominal: nominalController.text,
-          keterangan: keteranganController.text,
-          id: data["idWip"].toString());
-
-      if (response == true) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xff00b212),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
-            content: Text("Berhasil Menambah Pengeluaran",
-                textAlign: TextAlign.center)));
-        Navigator.pop(context);
-        // Navigator.popAndPushNamed(context, data["from"],
-        //     arguments: data["idWip"]);
-      } else {
+      if (int.parse(data["total_uang_saku"].replaceAll(".", "")) <
+          int.parse(nominalController.text.replaceAll(".", ""))) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
             duration: Duration(seconds: 3),
-            content: Text(response, textAlign: TextAlign.center)));
+            content: Text("Pengeluaran Melebihi Total Uang Saku",
+                textAlign: TextAlign.center)));
+      } else if (int.parse(data["total_uang_saku"].replaceAll(".", "")) >=
+          int.parse(nominalController.text.replaceAll(".", ""))) {
+        dynamic response = await workProvider.AddPocketMoney(
+            token: token,
+            nominal: nominalController.text.replaceAll(".", ""),
+            keterangan: keteranganController.text,
+            id: data["idWip"].toString());
+
+        if (response == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xff00b212),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 3),
+              content: Text("Berhasil Menambah Pengeluaran",
+                  textAlign: TextAlign.center)));
+          Navigator.pop(context);
+          // Navigator.popAndPushNamed(context, data["from"],
+          //     arguments: data["idWip"]);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 3),
+              content: Text(response, textAlign: TextAlign.center)));
+        }
       }
+
+      setState(() {
+        isLoading = false;
+      });
     }
 
     handleEditPengeluaran() async {
@@ -87,30 +105,49 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
 
       final token = storage.read("token");
 
-      dynamic response = await workProvider.EditPocketMoney(
-          token: token,
-          nominal: nominalController.text,
-          keterangan: keteranganController.text,
-          id: data["idPengeluaran"].toString());
-
-      if (response == true) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xff00b212),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
-            content: Text("Berhasil Edit Pengeluaran",
-                textAlign: TextAlign.center)));
-        Navigator.pop(context);
-        // Navigator.pushNamed(context, data["from"], arguments: data["idWip"]);
-      } else {
+      if (int.parse(data["total_uang_saku"].replaceAll(".", "")) +
+              int.parse(data["nominal"].replaceAll(".", "")) <
+          int.parse(nominalController.text.replaceAll(".", ""))) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
             duration: Duration(seconds: 3),
-            content: Text(response, textAlign: TextAlign.center)));
+            content: Text("Pengeluaran Melebihi Total Uang Saku",
+                textAlign: TextAlign.center)));
+      } else if (int.parse(data["total_uang_saku"].replaceAll(".", "")) +
+              int.parse(data["nominal"].replaceAll(".", "")) >=
+          int.parse(nominalController.text.replaceAll(".", ""))) {
+        dynamic response = await workProvider.EditPocketMoney(
+            token: token,
+            nominal: nominalController.text.replaceAll(".", ""),
+            keterangan: keteranganController.text,
+            id: data["idPengeluaran"].toString());
+
+        if (response == true) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xff00b212),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 3),
+              content: Text("Berhasil Edit Pengeluaran",
+                  textAlign: TextAlign.center)));
+          Navigator.pop(context);
+          // Navigator.popAndPushNamed(context, data["from"],
+          //     arguments: data["idWip"]);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 3),
+              content: Text(response, textAlign: TextAlign.center)));
+        }
       }
+
+      setState(() {
+        isLoading = false;
+      });
     }
 
     return Scaffold(
@@ -153,6 +190,7 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
                     Input(
                         label: 'Nominal : ',
                         controller: nominalController,
+                        type: "number",
                         width: double.infinity),
                     SizedBox(height: 30),
                     Input(

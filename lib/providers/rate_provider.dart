@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/cupertino.dart';
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/rate_model.dart';
@@ -23,7 +25,6 @@ class RateProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print("Error : $e");
       return e.toString().replaceAll("Exception:", "");
     }
   }

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/area_model.dart';
 import 'package:sutindo_supir_app/services/area_service.dart';
@@ -22,7 +24,6 @@ class AreaProvider with ChangeNotifier {
 
       return true;
     } catch (e) {
-      print("e $e ");
       return e.toString().replaceAll("Exception:", "");
     }
   }

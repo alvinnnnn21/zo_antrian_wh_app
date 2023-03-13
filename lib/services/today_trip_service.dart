@@ -1,19 +1,14 @@
+// ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/today_trip_model.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class TodayTripService {
   Future<TodayTrip> GetTodayTrip({required String token}) async {
     var url = '${API.baseURL}get-today-trip';
-    var headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer $token'
-    };
+    var headers = {'Authorization': 'Bearer $token'};
     var body = {"id_area": API.getArea()};
 
     var response =
@@ -21,8 +16,6 @@ class TodayTripService {
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-
-      final value = NumberFormat("#,##0", "en_US");
 
       List jka = [];
       List jpa = [];
@@ -54,7 +47,7 @@ class TodayTripService {
         "name": data["user"]["karyawan"].toString(),
         "jumlah_rate": data["jumlah_rate"],
         "tuntas_kirim": data["tuntas_kirim"],
-        "tonase_kirim": value.format(data["tonase_kirim"]).toString() + " kg",
+        "tonase_kirim": data["tonase_kirim"] + " kg",
         "jka": jka,
         "jpa": jpa,
         "list_pocket_money": list_pocket_money

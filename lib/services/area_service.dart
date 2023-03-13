@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/models/area_model.dart';
 import 'package:http/http.dart' as http;

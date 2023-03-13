@@ -21,6 +21,7 @@ class RateService {
     var headers = {'Authorization': 'Bearer $token'};
 
     print('token $body');
+    print('token $token');
 
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
@@ -66,25 +67,48 @@ class RateService {
 
       for (var i = 0; i < key_detail.length; i++) {
         var task = data["detail"][key_detail[i]];
-        var key_sj = task["items"].keys.toList();
+        var key_sj = task["sj"].keys.toList();
 
         List<SJ> list_sj = [];
 
         for (var j = 0; j < key_sj.length; j++) {
+          var key_task_item = task["sj"][key_sj[j]].keys.toList();
+
           List<TaskItem> list_task_item = [];
-          var key_task_item = task["items"][key_sj[j]].keys.toList();
 
-          for (var k = 0; k < key_task_item.length; k++) {}
+          for (var x = 0; x < key_task_item.length; x++) {
+            var task_item = task["sj"][key_sj[j]][key_task_item[x]];
 
-          var task_item = task["items"][key_sj[j]];
-          var lokasi = task_item["lokasi"];
+            List<Lokasi> list_lokasi = [];
 
-          List<Lokasi> list_lokasi = [];
+            for (var y = 0; y < task_item["lokasi"].length; y++) {
+              var item_lokasi = task_item["lokasi"][y];
 
-          for (var q = 0; q < lokasi.length; q++) {
-            list_lokasi.add(Lokasi.fromJson(
-                {"lokasi": lokasi[q]["nama_lokasi"], "same": false}));
+              list_lokasi.add(Lokasi.fromJson(
+                  {"lokasi": item_lokasi["nama_lokasi"], "same": false}));
+            }
+            list_task_item.add(TaskItem.fromJson({
+              "item": task_item["nama_item"],
+              "weight": task_item["tonase"].toString(),
+              "list_lokasi": list_lokasi
+            }));
           }
+
+          list_sj.add(SJ.fromJson({
+            "no": key_sj[j],
+            "list_task": list_task_item,
+            "total_item": "",
+            "total_weight": ""
+          }));
+
+          // var lokasi = task_item["lokasi"];
+
+          // List<Lokasi> list_lokasi = [];
+
+          // for (var q = 0; q < lokasi.length; q++) {
+          //   list_lokasi.add(Lokasi.fromJson(
+          //       {"lokasi": lokasi[q]["nama_lokasi"], "same": false}));
+          // }
 
           // for (var x = 0; x < key_lokasi.length; x++) {
           //   list_lokasi.add(Lokasi.fromJson({
@@ -101,18 +125,6 @@ class RateService {
           //   }
           // }
 
-          list_task_item.add(TaskItem.fromJson({
-            "item": task_item["nama_item"],
-            "weight": task_item["tonase"].toString(),
-            "list_lokasi": list_lokasi
-          }));
-
-          list_sj.add(SJ.fromJson({
-            "no": task["sj"][j],
-            "list_task": list_task_item,
-            "total_item": "",
-            "total_weight": ""
-          }));
         }
 
         list_task.add(Task.fromJson({
@@ -130,6 +142,7 @@ class RateService {
           "progress_eksternal": 0,
           "is_show": false,
           "is_enable": false,
+          "no_urut": 0
         }));
       }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/models/user_model.dart';

@@ -10,7 +10,7 @@ class WorkInProgress {
   String kapasitas = "";
   String kernet = "";
   int total_sj = 0;
-  int total_item = 0;
+  String total_item = "";
   List<Task> list_task = [];
   List<PocketMoney> list_pocket_money = [];
   String total_pocket_money = "";
@@ -28,7 +28,7 @@ class WorkInProgress {
       this.kapasitas = "",
       this.kernet = "",
       this.total_sj = 0,
-      this.total_item = 0,
+      this.total_item = "",
       this.list_task = const [],
       this.list_pocket_money = const [],
       this.total_pocket_money = "",

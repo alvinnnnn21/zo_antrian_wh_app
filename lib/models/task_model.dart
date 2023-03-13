@@ -14,6 +14,7 @@ class Task {
   String mulai = "";
   String sampai = "";
   String batal = "";
+  int no_urut = 0;
   int progress_eksternal = 0;
   bool is_show = false;
   bool is_enable = false;
@@ -31,7 +32,8 @@ class Task {
       this.batal = "",
       this.progress_eksternal = 0,
       this.is_show = false,
-      this.is_enable = false});
+      this.is_enable = false,
+      this.no_urut = 0});
 
   Task.fromJson(Map<String, dynamic> json) {
     perusahaan = json["perusahaan"];
@@ -48,6 +50,7 @@ class Task {
     progress_eksternal = json["progress_eksternal"];
     is_show = json["is_show"];
     is_enable = json["is_enable"];
+    no_urut = json["no_urut"];
   }
 
   Map<String, dynamic> toJson() {
@@ -66,6 +69,7 @@ class Task {
       "progress_eksternal": progress_eksternal,
       "is_show": is_show,
       "is_enable": is_enable,
+      "no_urut": no_urut
     };
   }
 }

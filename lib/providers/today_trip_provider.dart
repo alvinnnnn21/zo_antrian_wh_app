@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/today_trip_model.dart';
 import 'package:sutindo_supir_app/services/today_trip_service.dart';
@@ -22,7 +24,6 @@ class TodayTripProvider with ChangeNotifier {
 
       return true;
     } catch (e) {
-      print(e);
       return false;
     }
   }
