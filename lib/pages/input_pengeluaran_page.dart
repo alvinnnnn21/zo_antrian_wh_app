@@ -61,7 +61,7 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text("Pengeluaran Melebihi Total Uang Saku",
                 textAlign: TextAlign.center)));
       } else if (int.parse(data["total_uang_saku"].replaceAll(".", "")) >=
@@ -77,19 +77,33 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
               backgroundColor: Color(0xff00b212),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-              duration: Duration(seconds: 3),
+              duration: Duration(seconds: 2),
               content: Text("Berhasil Menambah Pengeluaran",
                   textAlign: TextAlign.center)));
           Navigator.pop(context);
           // Navigator.popAndPushNamed(context, data["from"],
           //     arguments: data["idWip"]);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xffff0000),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-              duration: Duration(seconds: 3),
-              content: Text(response, textAlign: TextAlign.center)));
+          if (response == "401") {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/login", (route) => false);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xffff0000),
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8))),
+                duration: Duration(seconds: 2),
+                content: Text("Token expired, silahkan login kembali",
+                    textAlign: TextAlign.center)));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xffff0000),
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8))),
+                duration: Duration(seconds: 2),
+                content: Text(response, textAlign: TextAlign.center)));
+          }
         }
       }
 
@@ -112,7 +126,7 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text("Pengeluaran Melebihi Total Uang Saku",
                 textAlign: TextAlign.center)));
       } else if (int.parse(data["total_uang_saku"].replaceAll(".", "")) +
@@ -129,19 +143,33 @@ class _InputPengeluaranPageState extends State<InputPengeluaranPage> {
               backgroundColor: Color(0xff00b212),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-              duration: Duration(seconds: 3),
+              duration: Duration(seconds: 2),
               content: Text("Berhasil Edit Pengeluaran",
                   textAlign: TextAlign.center)));
           Navigator.pop(context);
           // Navigator.popAndPushNamed(context, data["from"],
           //     arguments: data["idWip"]);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              backgroundColor: Color(0xffff0000),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-              duration: Duration(seconds: 3),
-              content: Text(response, textAlign: TextAlign.center)));
+          if (response == "401") {
+            Navigator.pushNamedAndRemoveUntil(
+                context, "/login", (route) => false);
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xffff0000),
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8))),
+                duration: Duration(seconds: 2),
+                content: Text("Token expired, silahkan login kembali",
+                    textAlign: TextAlign.center)));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                backgroundColor: Color(0xffff0000),
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8))),
+                duration: Duration(seconds: 2),
+                content: Text(response, textAlign: TextAlign.center)));
+          }
         }
       }
 

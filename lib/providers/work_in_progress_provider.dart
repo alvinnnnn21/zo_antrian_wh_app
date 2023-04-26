@@ -25,10 +25,8 @@ class WorkInProgressProvider extends ChangeNotifier {
       notifyListeners();
 
       return true;
-    } catch (e, stacktrace) {
-      print("error : ${e.toString()}");
-      print("error : ${stacktrace.toString()}");
-      return e.toString().replaceAll("Exception:", "");
+    } catch (e) {
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 
@@ -38,12 +36,12 @@ class WorkInProgressProvider extends ChangeNotifier {
       required String keterangan,
       required String id}) async {
     try {
-      bool response = await WorkInProgressService().AddPocketMoney(
+      await WorkInProgressService().AddPocketMoney(
           token: token, nominal: nominal, keterangan: keterangan, id: id);
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 
@@ -55,7 +53,7 @@ class WorkInProgressProvider extends ChangeNotifier {
       required String progress,
       required int no_urut}) async {
     try {
-      bool response = await WorkInProgressService().UpdateProgress(
+      await WorkInProgressService().UpdateProgress(
           token: token,
           progress: progress,
           keterangan: keterangan,
@@ -64,10 +62,8 @@ class WorkInProgressProvider extends ChangeNotifier {
           no_urut: no_urut);
 
       return true;
-    } catch (e, stacktrace) {
-      print("error : $e");
-      print("error : $stacktrace");
-      return e.toString().replaceAll("Exception:", "");
+    } catch (e) {
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 
@@ -78,7 +74,7 @@ class WorkInProgressProvider extends ChangeNotifier {
       required String customer,
       required String no_urut}) async {
     try {
-      bool response = await WorkInProgressService().HapusRute(
+      await WorkInProgressService().HapusRute(
           token: token,
           keterangan: keterangan,
           id: id,
@@ -87,7 +83,7 @@ class WorkInProgressProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 
@@ -97,12 +93,12 @@ class WorkInProgressProvider extends ChangeNotifier {
       required String keterangan,
       required String id}) async {
     try {
-      bool response = await WorkInProgressService().EditPocketMoney(
+      await WorkInProgressService().EditPocketMoney(
           token: token, nominal: nominal, keterangan: keterangan, id: id);
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 

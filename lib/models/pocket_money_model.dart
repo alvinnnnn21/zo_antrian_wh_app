@@ -1,6 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:sutindo_supir_app/providers/menu_provider.dart';
-
 class PocketMoney {
   String perusahaan = "";
   String purpose = "";

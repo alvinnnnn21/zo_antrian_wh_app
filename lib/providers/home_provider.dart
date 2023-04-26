@@ -20,11 +20,13 @@ class HomeProvider with ChangeNotifier {
 
       _home = home;
 
+      print("LOADING");
+
       notifyListeners();
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 }

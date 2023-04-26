@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import 'package:sutindo_supir_app/theme.dart';
 import 'package:sutindo_supir_app/widgets/button_widget.dart';
 import 'package:sutindo_supir_app/widgets/info_widget.dart';
 import 'package:sutindo_supir_app/widgets/label_widget.dart';
-import 'package:sutindo_supir_app/widgets/text_item_widget.dart';
 
 class RatePage extends StatefulWidget {
   const RatePage({Key? key}) : super(key: key);
@@ -24,6 +22,7 @@ class _RatePageState extends State<RatePage> {
   final storage = GetStorage();
   bool isLoading = true;
 
+  @override
   void initState() {
     Timer(Duration(seconds: 1), () {
       getInit();
@@ -44,12 +43,23 @@ class _RatePageState extends State<RatePage> {
     });
 
     if (response != true) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xffff0000),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-          duration: Duration(seconds: 3),
-          content: Text(response, textAlign: TextAlign.center)));
+      if (response == "401") {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text("Token expired, silahkan login kembali",
+                textAlign: TextAlign.center)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text(response, textAlign: TextAlign.center)));
+      }
     }
   }
 
@@ -76,19 +86,31 @@ class _RatePageState extends State<RatePage> {
             backgroundColor: Color(0xff00b212),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text("Berhasil Sign Rate", textAlign: TextAlign.center)));
 
         Navigator.pop(context);
 
         // Navigator.popAndPushNamed(context, "/home");
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xffff0000),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
-            content: Text(response, textAlign: TextAlign.center)));
+        if (response == "401") {
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/login", (route) => false);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 2),
+              content: Text("Token expired, silahkan login kembali",
+                  textAlign: TextAlign.center)));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 2),
+              content: Text(response, textAlign: TextAlign.center)));
+        }
       }
     }
 
@@ -111,18 +133,30 @@ class _RatePageState extends State<RatePage> {
             backgroundColor: Color(0xff00b212),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content:
                 Text("Berhasil Reject Rate", textAlign: TextAlign.center)));
 
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            backgroundColor: Color(0xffff0000),
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
-            content: Text(response, textAlign: TextAlign.center)));
+        if (response == "401") {
+          Navigator.pushNamedAndRemoveUntil(
+              context, "/login", (route) => false);
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 2),
+              content: Text("Token expired, silahkan login kembali",
+                  textAlign: TextAlign.center)));
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              backgroundColor: Color(0xffff0000),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+              duration: Duration(seconds: 2),
+              content: Text(response, textAlign: TextAlign.center)));
+        }
       }
     }
 
@@ -332,77 +366,93 @@ class _RatePageState extends State<RatePage> {
                                       ])),
                               SizedBox(height: 10),
                               Column(
-                                  children: rateProvider.rate.list_pocket_money
-                                      .map((item) => Container(
-                                          padding: padding,
-                                          decoration: decoration,
-                                          child: Column(
-                                            children: [
-                                              Row(
+                                children: [
+                                  Container(
+                                      padding: padding,
+                                      decoration: decoration,
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text("Uang Saku",
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                                Text(
+                                                    ((rateProvider
+                                                                .rate
+                                                                .list_pocket_money
+                                                                .isNotEmpty)
+                                                            ? rateProvider
+                                                                .rate
+                                                                .list_pocket_money[
+                                                                    0]
+                                                                .ammount
+                                                            : 0)
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold))
+                                              ]),
+                                          SizedBox(height: 20),
+                                          data["isEnabled"]
+                                              ? Row(
                                                   mainAxisAlignment:
                                                       MainAxisAlignment
                                                           .spaceBetween,
                                                   children: [
-                                                    Text("Uang Saku",
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold)),
-                                                    Text(item.ammount,
-                                                        style: TextStyle(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .bold))
-                                                  ]),
-                                              SizedBox(height: 20),
-                                              data["isEnabled"]
-                                                  ? Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                          Button(
-                                                              title: "Sign",
-                                                              width: 100,
-                                                              height: 35,
-                                                              fontSize: 15,
-                                                              onPressed: () {
-                                                                handlePocketMoneySign(
-                                                                    item.id);
-                                                              },
-                                                              bgColor: Color(
-                                                                  0xff00b212),
-                                                              borderColor: Color(
-                                                                  0xff00b212),
-                                                              textColor:
-                                                                  Colors.white,
-                                                              isLoading: false),
-                                                          Button(
-                                                              title: "Reject",
-                                                              width: 100,
-                                                              height: 35,
-                                                              fontSize: 15,
-                                                              // onPressed:
-                                                              //     handlePocketMoneyReject,
-                                                              onPressed: () {
-                                                                showAlertDialog(
-                                                                    context,
-                                                                    item.id);
-                                                              },
-                                                              bgColor: Color(
-                                                                  0xffff0000),
-                                                              borderColor: Color(
-                                                                  0xffff0000),
-                                                              textColor:
-                                                                  Colors.white,
-                                                              isLoading: false),
-                                                        ])
-                                                  : SizedBox(height: 0)
-                                            ],
-                                          )))
-                                      .toList())
+                                                      Button(
+                                                          title: "Sign",
+                                                          width: 100,
+                                                          height: 35,
+                                                          fontSize: 15,
+                                                          onPressed: () {
+                                                            handlePocketMoneySign(
+                                                                rateProvider
+                                                                    .rate.id);
+                                                          },
+                                                          bgColor:
+                                                              Color(0xff00b212),
+                                                          borderColor:
+                                                              Color(0xff00b212),
+                                                          textColor:
+                                                              Colors.white,
+                                                          isLoading: false),
+                                                      Button(
+                                                          title: "Reject",
+                                                          width: 100,
+                                                          height: 35,
+                                                          fontSize: 15,
+                                                          // onPressed:
+                                                          //     handlePocketMoneyReject,
+                                                          onPressed: () {
+                                                            showAlertDialog(
+                                                                context,
+                                                                rateProvider
+                                                                    .rate.id);
+                                                          },
+                                                          bgColor:
+                                                              Color(0xffff0000),
+                                                          borderColor:
+                                                              Color(0xffff0000),
+                                                          textColor:
+                                                              Colors.white,
+                                                          isLoading: false),
+                                                    ])
+                                              : SizedBox(height: 0)
+                                        ],
+                                      ))
+                                ],
+                              )
+                              // Column(
+                              //     children: rateProvider.rate.list_pocket_money
+                              //         .map((item) => )
+                              //         .toList())
                             ])))));
   }
 }

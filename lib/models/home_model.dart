@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/menu_model.dart';
-import 'package:sutindo_supir_app/models/rate_model.dart';
 
 class Home {
   Map<String, dynamic> wip = {};

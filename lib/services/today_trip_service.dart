@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 import 'dart:convert';
+import 'package:get_storage/get_storage.dart';
 import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/today_trip_model.dart';
@@ -21,7 +22,16 @@ class TodayTripService {
       List jpa = [];
       List<PocketMoney> list_pocket_money = [];
 
-      var keys = data["rates"].keys.toList();
+      if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
+      }
+
+      var keys = data["rates"]?.length > 0 ? data["rates"].keys.toList() : [];
 
       for (var i = 0; i < keys.length; i++) {
         var item = data["rates"][keys[i]];
@@ -47,7 +57,7 @@ class TodayTripService {
         "name": data["user"]["karyawan"].toString(),
         "jumlah_rate": data["jumlah_rate"],
         "tuntas_kirim": data["tuntas_kirim"],
-        "tonase_kirim": data["tonase_kirim"] + " kg",
+        "tonase_kirim": data["tonase_kirim"].toString() + " kg",
         "jka": jka,
         "jpa": jpa,
         "list_pocket_money": list_pocket_money

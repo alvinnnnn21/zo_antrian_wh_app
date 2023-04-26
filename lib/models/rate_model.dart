@@ -3,6 +3,7 @@ import 'package:sutindo_supir_app/models/task_model.dart';
 import 'package:sutindo_supir_app/models/tonase_model.dart';
 
 class Rate {
+  String id = "";
   String nopol = "";
   String armada = "";
   String sopir = "";
@@ -17,7 +18,8 @@ class Rate {
   List<PocketMoney> list_pocket_money = [];
 
   Rate(
-      {this.nopol = "",
+      {this.id = "",
+      this.nopol = "",
       this.armada = "",
       this.sopir = "",
       this.tonase_kirim = "",
@@ -31,6 +33,7 @@ class Rate {
       this.list_tonase = const []});
 
   Rate.fromJson(Map<String, dynamic> json) {
+    id = json["id"];
     nopol = json["nopol"];
     armada = json["armada"];
     sopir = json["sopir"];
@@ -47,6 +50,7 @@ class Rate {
 
   Map<String, dynamic> toJson() {
     return {
+      "id": id,
       "nopol": nopol,
       "armada": armada,
       "sopir": sopir,

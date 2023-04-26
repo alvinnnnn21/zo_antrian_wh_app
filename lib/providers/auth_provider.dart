@@ -25,7 +25,7 @@ class AuthProvider with ChangeNotifier {
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 }

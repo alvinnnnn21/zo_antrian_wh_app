@@ -42,12 +42,23 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
     });
 
     if (response != true) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xffff0000),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-          duration: Duration(seconds: 3),
-          content: Text(response, textAlign: TextAlign.center)));
+      if (response == "401") {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text("Token expired, silahkan login kembali",
+                textAlign: TextAlign.center)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text(response, textAlign: TextAlign.center)));
+      }
     }
   }
 
@@ -75,7 +86,7 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
               style: TextStyle(color: Colors.white),
             )),
         body: isLoading
-            ? Container(
+            ? SizedBox(
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: Column(
@@ -133,19 +144,19 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
                             Column(
                                 children: pengeluaranProvider
                                     .pengeluaran.list_pocket_money
-                                    .map((item) => Container(
-                                          height: 35,
-                                          child: Row(
+                                    .map((item) => Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             mainAxisAlignment:
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Expanded(
-                                                flex: 3,
-                                                child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      IconButton(
+                                              SizedBox(
+                                                child: Row(children: [
+                                                  SizedBox(
+                                                      width: 20,
+                                                      child: IconButton(
+                                                          padding:
+                                                              EdgeInsets.all(0),
                                                           iconSize: 30,
                                                           onPressed:
                                                               item.status == "2"
@@ -176,33 +187,114 @@ class _DetailPengeluaranPageState extends State<DetailPengeluaranPage> {
                                                                     }
                                                                   : null,
                                                           icon: Icon(Icons
-                                                              .edit_note_sharp)),
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                bottom: 4),
-                                                        child: Expanded(
-                                                          child: Text(
-                                                              item.purpose,
-                                                              style: TextStyle(
-                                                                  color: Color(
-                                                                      0xffff0000))),
-                                                        ),
-                                                      )
-                                                    ]),
+                                                              .edit_note_sharp))),
+                                                  SizedBox(width: 15),
+                                                  SizedBox(
+                                                      width: (MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width -
+                                                              35) *
+                                                          0.55,
+                                                      child: Text(item.purpose,
+                                                          style: TextStyle(
+                                                              color: Color(
+                                                                  0xffff0000)))),
+                                                ]),
                                               ),
-                                              Expanded(
-                                                  flex: 1,
+                                              SizedBox(
+                                                  width: (MediaQuery.of(context)
+                                                              .size
+                                                              .width -
+                                                          35) *
+                                                      0.2,
                                                   child: Text(item.ammount,
                                                       textAlign: TextAlign.end,
                                                       style: TextStyle(
                                                           color: Color(
                                                               0xffff0000))))
-                                            ],
-                                          ),
-                                        ))
+                                            ]))
                                     .toList()),
+
+                            // Column(
+                            //     children: pengeluaranProvider
+                            //         .pengeluaran.list_pocket_money
+                            //         .map((item) => Container(
+                            //               height: 35,
+                            //               child: Row(
+                            //                 mainAxisAlignment:
+                            //                     MainAxisAlignment.spaceBetween,
+                            //                 children: [
+                            //                   Expanded(
+                            //                     flex: 3,
+                            //                     child: Row(
+                            //                         crossAxisAlignment:
+                            //                             CrossAxisAlignment.end,
+                            //                         children: [
+                            //                           IconButton(
+                            //                               iconSize: 30,
+                            // onPressed:
+                            //     item.status == "2"
+                            //         ? () {
+                            //             Navigator.pushNamed(
+                            //                 context,
+                            //                 "/input-pengeluaran",
+                            //                 arguments: {
+                            //                   "idWip":
+                            //                       id,
+                            //                   "type":
+                            //                       "edit",
+                            //                   "from":
+                            //                       "/detail-pengeluaran",
+                            //                   "idPengeluaran":
+                            //                       item.id,
+                            //                   "nominal":
+                            //                       item.ammount,
+                            //                   "purpose":
+                            //                       item.purpose,
+                            //                   "total_uang_saku":
+                            //                       pengeluaranProvider.pengeluaran.total_saldo
+                            //                 }).then(
+                            //                 (_) =>
+                            //                     {
+                            //                       getInit()
+                            //                     });
+                            //           }
+                            //         : null,
+                            //                               icon: Icon(Icons
+                            //                                   .edit_note_sharp)),
+                            //                           Padding(
+                            //                             padding:
+                            //                                 const EdgeInsets
+                            //                                         .only(
+                            //                                     bottom: 4),
+                            //                             child: Expanded(
+                            //                               child: Text(
+                            //                                   item.purpose +
+                            //                                       item.purpose +
+                            //                                       item.purpose +
+                            //                                       item.purpose +
+                            //                                       item.purpose +
+                            //                                       item.purpose +
+                            //                                       item.purpose,
+                            //                                   style: TextStyle(
+                            //                                       color: Color(
+                            //                                           0xffff0000))),
+                            //                             ),
+                            //                           )
+                            //                         ]),
+                            //                   ),
+                            //                   Expanded(
+                            //                       flex: 1,
+                            //                       child: Text(item.ammount,
+                            //                           textAlign: TextAlign.end,
+                            //                           style: TextStyle(
+                            //                               color: Color(
+                            //                                   0xffff0000))))
+                            //                 ],
+                            //               ),
+                            //             ))
+                            //         .toList()),
                             SizedBox(height: 10),
                             Row(
                                 mainAxisAlignment:

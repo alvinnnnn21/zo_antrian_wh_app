@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/cupertino.dart';
-import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/rate_model.dart';
 import 'package:sutindo_supir_app/services/rate_service.dart';
 
@@ -25,19 +24,18 @@ class RateProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 
   Future<dynamic> ActionUangSaku(
       {required String token, required int id, required String type}) async {
     try {
-      bool response =
-          await RateService().ActionUangSaku(token: token, id: id, type: type);
+      await RateService().ActionUangSaku(token: token, id: id, type: type);
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 }

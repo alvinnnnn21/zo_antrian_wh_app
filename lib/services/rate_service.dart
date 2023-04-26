@@ -1,8 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/models/lokasi_model.dart';
@@ -20,9 +19,6 @@ class RateService {
     var body = {"id": id.toString(), "id_area": API.getArea()};
     var headers = {'Authorization': 'Bearer $token'};
 
-    print('token $body');
-    print('token $token');
-
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 
@@ -34,6 +30,15 @@ class RateService {
       List<Task> list_task = [];
       List<Tonase> list_tonase = [];
       List<PocketMoney> list_pocket_money = [];
+
+      if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
+      }
 
       var key_lokasi = data["lokasi"].keys.toList();
 
@@ -147,6 +152,7 @@ class RateService {
       }
 
       Rate rate = Rate.fromJson({
+        "id": data["id"].toString(),
         "nopol": data["nopol"],
         "armada": data["jenis_armada"],
         "sopir": data["nama_sopir"],
@@ -177,11 +183,20 @@ class RateService {
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 
+    print("ERROR $jsonDecode(response.body)");
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
       if (data["status"] == 200) {
         return true;
+      } else if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
       } else {
         throw Exception(data["message"]);
       }

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Menu {
   String label = "";
   String url = "";

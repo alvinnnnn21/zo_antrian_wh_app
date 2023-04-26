@@ -40,7 +40,7 @@ class _ConfigPageState extends State<ConfigPage> {
 
     bool isFound = false;
 
-    if (list_area.length > 0) {
+    if (list_area.isNotEmpty) {
       isFound = list_area.indexWhere((item) => item.areaID == area) > 0
           ? true
           : false;
@@ -59,7 +59,7 @@ class _ConfigPageState extends State<ConfigPage> {
           backgroundColor: Color(0xffff0000),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-          duration: Duration(seconds: 3),
+          duration: Duration(seconds: 2),
           content: Text(response, textAlign: TextAlign.center)));
     }
   }

@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/sj_model.dart';
-import 'package:sutindo_supir_app/models/task_item_model.dart';
 
 class Task {
   String perusahaan = "";

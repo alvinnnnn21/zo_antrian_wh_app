@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:get_storage/get_storage.dart';
 import 'package:sutindo_supir_app/api.dart';
 import 'package:http/http.dart' as http;
 import 'package:sutindo_supir_app/models/home_model.dart';
@@ -23,6 +24,15 @@ class HomeService {
     if (response.statusCode == 200 && response2.statusCode == 200) {
       var data = jsonDecode(response.body);
       var data2 = jsonDecode(response2.body);
+
+      if (data["status"] == 401 || data2["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
+      }
 
       var rates = data["rates"];
       var keys = rates.keys.toList();

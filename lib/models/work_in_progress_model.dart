@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/task_model.dart';
 
@@ -18,6 +20,7 @@ class WorkInProgress {
   String total_pengeluaran = "";
   String id = "";
   String total_berat = "";
+  bool is_null_jka = false;
 
   WorkInProgress(
       {this.nopol = "",
@@ -35,7 +38,8 @@ class WorkInProgress {
       this.total_saldo = "",
       this.total_pengeluaran = "",
       this.id = "",
-      this.total_berat = ""});
+      this.total_berat = "",
+      this.is_null_jka = false});
 
   WorkInProgress.fromJson(Map<String, dynamic> json) {
     nopol = json["nopol"];
@@ -54,6 +58,7 @@ class WorkInProgress {
     total_pengeluaran = json["total_pengeluaran"];
     id = json["id"];
     total_berat = json["total_berat"];
+    is_null_jka = json["is_null_jka"];
   }
 
   Map<String, dynamic> toJson() {
@@ -74,6 +79,7 @@ class WorkInProgress {
       "total_pengeluaran": total_pengeluaran,
       "id": id,
       "total_berat": total_berat,
+      "is_null_jka": is_null_jka,
     };
   }
 }

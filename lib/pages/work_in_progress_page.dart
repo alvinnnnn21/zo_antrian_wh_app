@@ -1,16 +1,15 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, non_constant_identifier_names
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/task_model.dart';
 import 'package:sutindo_supir_app/models/work_in_progress_model.dart';
 import 'package:sutindo_supir_app/providers/work_in_progress_provider.dart';
 import 'package:sutindo_supir_app/theme.dart';
 import 'package:sutindo_supir_app/widgets/button_widget.dart';
 import 'package:sutindo_supir_app/widgets/input_widget.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class WorkInProgressPage extends StatefulWidget {
   const WorkInProgressPage({Key? key}) : super(key: key);
@@ -22,8 +21,8 @@ class WorkInProgressPage extends StatefulWidget {
 class _WorkInProgressPageState extends State<WorkInProgressPage> {
   final storage = GetStorage();
   bool isLoading = true;
+  bool isError = false;
   List<TextEditingController> list_controller = [];
-  TextEditingController _controller = TextEditingController();
   List<Map<String, dynamic>> list_checkbox = [];
   List<String> list_progress = [];
 
@@ -37,6 +36,10 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
 
   getInit() async {
     int id = ModalRoute.of(context)!.settings.arguments as int;
+
+    setState(() {
+      isLoading = true;
+    });
 
     final String token = storage.read("token");
     dynamic response =
@@ -64,13 +67,43 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
     });
 
     if (response != true) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Color(0xffff0000),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-          duration: Duration(seconds: 3),
-          content: Text(response, textAlign: TextAlign.center)));
+      if (response == "401") {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text("Token expired, silahkan login kembali",
+                textAlign: TextAlign.center)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text(response, textAlign: TextAlign.center)));
+      }
     }
+  }
+
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await getInit();
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+
+    if (mounted) setState(() {});
+    _refreshController.loadComplete();
   }
 
   @override
@@ -104,7 +137,7 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
             backgroundColor: Color(0xff00b212),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content:
                 Text("Berhasil Update Progress", textAlign: TextAlign.center)));
 
@@ -114,7 +147,7 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text(response, textAlign: TextAlign.center)));
       }
     }
@@ -143,7 +176,7 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
             backgroundColor: Color(0xff00b212),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text("Berhasil Hapus Rute", textAlign: TextAlign.center)));
 
         getInit();
@@ -152,7 +185,7 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
             backgroundColor: Color(0xffff0000),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-            duration: Duration(seconds: 3),
+            duration: Duration(seconds: 2),
             content: Text(response, textAlign: TextAlign.center)));
       }
     }
@@ -358,14 +391,21 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                                                       MainAxisAlignment
                                                                           .spaceBetween,
                                                                   children: [
-                                                                    Text(item2
-                                                                        .item),
+                                                                    Container(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.5,
+                                                                      child: Text(
+                                                                          item2
+                                                                              .item),
+                                                                    ),
                                                                     Text(item2
                                                                         .weight)
                                                                   ],
                                                                 ))
                                                             .toList()),
-                                                    SizedBox(height: 10),
+                                                    SizedBox(height: 20),
                                                     Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
@@ -388,125 +428,143 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                                                   ]),
                                             ))
                                         .toList()),
-                                task.progress_eksternal == 4
+                                workProvider.work.is_null_jka
                                     ? SizedBox()
-                                    : !task.is_enable
+                                    : task.progress_eksternal == 4
                                         ? SizedBox()
-                                        : Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                        : !task.is_enable
+                                            ? SizedBox()
+                                            : Column(
                                                 children: [
-                                                  CustomCheckbox(
-                                                      "Sampai",
-                                                      list_checkbox[
-                                                          int.parse(index) -
-                                                              1]["sampai"],
-                                                      checkDisabledCheckbox(
-                                                          task
-                                                              .progress_eksternal,
-                                                          1),
-                                                      (bool? checkboxState) {
-                                                    setCheckbox(
-                                                        int.parse(index) - 1,
-                                                        "sampai");
-                                                  }),
-                                                  CustomCheckbox(
-                                                      "Mulai",
-                                                      list_checkbox[
-                                                          int.parse(index) -
-                                                              1]["mulai"],
-                                                      checkDisabledCheckbox(
-                                                          task
-                                                              .progress_eksternal,
-                                                          2),
-                                                      (bool? checkboxState) {
-                                                    setCheckbox(
-                                                        int.parse(index) - 1,
-                                                        "mulai");
-                                                  }),
-                                                  CustomCheckbox(
-                                                      "Selesai",
-                                                      list_checkbox[
-                                                          int.parse(index) -
-                                                              1]["selesai"],
-                                                      checkDisabledCheckbox(
-                                                          task
-                                                              .progress_eksternal,
-                                                          3),
-                                                      (bool? checkboxState) {
-                                                    setCheckbox(
-                                                        int.parse(index) - 1,
-                                                        "selesai");
-                                                  }),
-                                                  task.progress_eksternal < 3
-                                                      ? Button(
-                                                          width: 80,
-                                                          title: "Hapus Rute",
-                                                          bgColor:
-                                                              Color(0xffff0000),
-                                                          borderColor:
-                                                              Color(0xffff0000),
-                                                          textColor:
-                                                              Colors.white,
-                                                          onPressed: () {
-                                                            handleHapusRute(
-                                                                list_controller[
-                                                                        int.parse(index) -
-                                                                            1]
-                                                                    .text,
-                                                                id.toString(),
-                                                                task.perusahaan,
-                                                                task.no_urut
-                                                                    .toString());
-                                                          },
-                                                          fontSize: 12,
-                                                          height: 30,
-                                                          isLoading: false)
-                                                      : SizedBox()
-                                                ],
-                                              ),
-                                              Input(
-                                                  width: double.infinity,
-                                                  label: "",
-                                                  controller: list_controller[
-                                                      int.parse(index) - 1]),
-                                              SizedBox(height: 10),
-                                              Button(
-                                                  title: "SIMPAN",
-                                                  bgColor: Color(0xff5493CA),
-                                                  borderColor:
-                                                      Color(0xff5493CA),
-                                                  textColor: Colors.white,
-                                                  isDisabled: list_progress[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomCheckbox(
+                                                          "Sampai",
+                                                          list_checkbox[
                                                               int.parse(index) -
-                                                                  1] ==
-                                                          "-"
-                                                      ? true
-                                                      : false,
-                                                  onPressed: () {
-                                                    handleUpdateProgress(
-                                                        list_progress[
+                                                                  1]["sampai"],
+                                                          checkDisabledCheckbox(
+                                                              task
+                                                                  .progress_eksternal,
+                                                              1),
+                                                          (bool?
+                                                              checkboxState) {
+                                                        setCheckbox(
                                                             int.parse(index) -
-                                                                1],
-                                                        list_controller[
+                                                                1,
+                                                            "sampai");
+                                                      }),
+                                                      CustomCheckbox(
+                                                          "Mulai",
+                                                          list_checkbox[
+                                                              int.parse(index) -
+                                                                  1]["mulai"],
+                                                          checkDisabledCheckbox(
+                                                              task
+                                                                  .progress_eksternal,
+                                                              2),
+                                                          (bool?
+                                                              checkboxState) {
+                                                        setCheckbox(
+                                                            int.parse(index) -
+                                                                1,
+                                                            "mulai");
+                                                      }),
+                                                      CustomCheckbox(
+                                                          "Selesai",
+                                                          list_checkbox[
+                                                              int.parse(index) -
+                                                                  1]["selesai"],
+                                                          checkDisabledCheckbox(
+                                                              task
+                                                                  .progress_eksternal,
+                                                              3),
+                                                          (bool?
+                                                              checkboxState) {
+                                                        setCheckbox(
+                                                            int.parse(index) -
+                                                                1,
+                                                            "selesai");
+                                                      }),
+                                                      task.progress_eksternal <
+                                                              3
+                                                          ? Button(
+                                                              width: 80,
+                                                              title:
+                                                                  "Hapus Rute",
+                                                              bgColor: Color(
+                                                                  0xffff0000),
+                                                              borderColor: Color(
+                                                                  0xffff0000),
+                                                              textColor:
+                                                                  Colors.white,
+                                                              onPressed: () {
+                                                                handleHapusRute(
+                                                                    list_controller[
+                                                                            int.parse(index) -
+                                                                                1]
+                                                                        .text,
+                                                                    id
+                                                                        .toString(),
+                                                                    task
+                                                                        .perusahaan,
+                                                                    task.no_urut
+                                                                        .toString());
+                                                              },
+                                                              fontSize: 12,
+                                                              height: 30,
+                                                              isLoading: false)
+                                                          : SizedBox()
+                                                    ],
+                                                  ),
+                                                  Input(
+                                                      width: double.infinity,
+                                                      label: "",
+                                                      controller:
+                                                          list_controller[
+                                                              int.parse(index) -
+                                                                  1]),
+                                                  SizedBox(height: 10),
+                                                  Button(
+                                                      title: "SIMPAN",
+                                                      bgColor:
+                                                          Color(0xff5493CA),
+                                                      borderColor:
+                                                          Color(0xff5493CA),
+                                                      textColor: Colors.white,
+                                                      isDisabled: list_progress[
+                                                                  int.parse(
+                                                                          index) -
+                                                                      1] ==
+                                                              "-"
+                                                          ? true
+                                                          : false,
+                                                      onPressed: () {
+                                                        handleUpdateProgress(
+                                                            list_progress[
                                                                 int.parse(
                                                                         index) -
-                                                                    1]
-                                                            .text,
-                                                        id.toString(),
-                                                        task.perusahaan,
-                                                        int.parse(index) - 1,
-                                                        task.no_urut);
-                                                  },
-                                                  fontSize: 15,
-                                                  height: 40,
-                                                  width: double.infinity,
-                                                  isLoading: false),
-                                            ],
-                                          )
+                                                                    1],
+                                                            list_controller[
+                                                                    int.parse(
+                                                                            index) -
+                                                                        1]
+                                                                .text,
+                                                            id.toString(),
+                                                            task.perusahaan,
+                                                            int.parse(index) -
+                                                                1,
+                                                            task.no_urut);
+                                                      },
+                                                      fontSize: 15,
+                                                      height: 40,
+                                                      width: double.infinity,
+                                                      isLoading: false),
+                                                ],
+                                              )
                               ],
                             ),
                           ),
@@ -546,135 +604,154 @@ class _WorkInProgressPageState extends State<WorkInProgressPage> {
                           child: CircularProgressIndicator(
                               color: Color(0xff2a78be)))
                     ]))
-            : SafeArea(
-                child: Padding(
-                    padding: EdgeInsets.all(25),
-                    child: SingleChildScrollView(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                                decoration: decoration,
-                                padding: padding,
-                                child: Column(
-                                  children: [
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Saldo",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold)),
-                                          Text(workProvider.work.total_saldo,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold))
-                                        ]),
-                                    SizedBox(height: 10),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Uang Saku",
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              )),
-                                          Text(
-                                              workProvider
-                                                  .work.total_pocket_money,
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ))
-                                        ]),
-                                    SizedBox(height: 10),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Pengeluaran",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color(0xffff0000),
-                                                  fontWeight: FontWeight.bold)),
-                                          Text(
-                                              workProvider
-                                                  .work.total_pengeluaran,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color(0xffff0000),
-                                                  fontWeight: FontWeight.bold))
-                                        ]),
-                                    SizedBox(height: 20),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Button(
-                                              title: "Input",
-                                              width: 100,
-                                              height: 35,
-                                              fontSize: 15,
-                                              onPressed: () {
-                                                Navigator.pushNamed(context,
-                                                    "/input-pengeluaran",
-                                                    arguments: {
-                                                      "idWip": id,
-                                                      "type": "input",
-                                                      "from": "/wip"
-                                                    }).then((_) => {getInit()});
-                                              },
-                                              bgColor: Color(0xffff0000),
-                                              borderColor: Color(0xffff0000),
-                                              textColor: Colors.white,
-                                              isLoading: false),
-                                          Button(
-                                              title: "Detail",
-                                              width: 100,
-                                              height: 35,
-                                              fontSize: 15,
-                                              onPressed: () {
-                                                Navigator.pushNamed(context,
-                                                        "/detail-pengeluaran",
-                                                        arguments: id)
-                                                    .then((_) => {getInit()});
-                                              },
-                                              bgColor: Color(0xff5493CA),
-                                              borderColor: Color(0xff5493CA),
-                                              textColor: Colors.white,
-                                              isLoading: false),
-                                        ])
-                                  ],
-                                )),
-                            SizedBox(height: 20),
-                            Column(
-                              children: workProvider.work.list_task
-                                  .asMap()
-                                  .entries
-                                  .map((item) => Item(
-                                      getColor(item.value.status),
-                                      (item.key + 1).toString(),
-                                      item.value,
-                                      workProvider.work.id))
-                                  .toList(),
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            : SmartRefresher(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                onLoading: _onLoading,
+                enablePullDown: true,
+                child: SafeArea(
+                    child: Padding(
+                        padding: EdgeInsets.all(25),
+                        child: SingleChildScrollView(
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                    'TOTAL : ${workProvider.work.total_item} item',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16)),
-                                Text(workProvider.work.tonase_kirim,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16))
-                              ],
-                            ),
-                            SizedBox(height: 40),
-                          ]),
-                    ))));
+                                Container(
+                                    decoration: decoration,
+                                    padding: padding,
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Saldo",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Text(
+                                                  workProvider.work.total_saldo,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                            ]),
+                                        SizedBox(height: 10),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Uang Saku",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  )),
+                                              Text(
+                                                  workProvider
+                                                      .work.total_pocket_money,
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  ))
+                                            ]),
+                                        SizedBox(height: 10),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text("Pengeluaran",
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Color(0xffff0000),
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                              Text(
+                                                  workProvider
+                                                      .work.total_pengeluaran,
+                                                  style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Color(0xffff0000),
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                            ]),
+                                        SizedBox(height: 20),
+                                        Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Button(
+                                                  title: "Input",
+                                                  width: 100,
+                                                  height: 35,
+                                                  fontSize: 15,
+                                                  onPressed: () {
+                                                    Navigator.pushNamed(context,
+                                                        "/input-pengeluaran",
+                                                        arguments: {
+                                                          "idWip": id,
+                                                          "type": "input",
+                                                          "from": "/wip",
+                                                          "total_uang_saku":
+                                                              workProvider.work
+                                                                  .total_saldo
+                                                        }).then(
+                                                        (_) => {getInit()});
+                                                  },
+                                                  bgColor: Color(0xffff0000),
+                                                  borderColor:
+                                                      Color(0xffff0000),
+                                                  textColor: Colors.white,
+                                                  isLoading: false),
+                                              Button(
+                                                  title: "Detail",
+                                                  width: 100,
+                                                  height: 35,
+                                                  fontSize: 15,
+                                                  onPressed: () {
+                                                    Navigator.pushNamed(context,
+                                                            "/detail-pengeluaran",
+                                                            arguments: id)
+                                                        .then(
+                                                            (_) => {getInit()});
+                                                  },
+                                                  bgColor: Color(0xff5493CA),
+                                                  borderColor:
+                                                      Color(0xff5493CA),
+                                                  textColor: Colors.white,
+                                                  isLoading: false),
+                                            ])
+                                      ],
+                                    )),
+                                SizedBox(height: 20),
+                                Column(
+                                  children: workProvider.work.list_task
+                                      .asMap()
+                                      .entries
+                                      .map((item) => Item(
+                                          getColor(item.value.status),
+                                          (item.key + 1).toString(),
+                                          item.value,
+                                          workProvider.work.id))
+                                      .toList(),
+                                ),
+                                SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                        'TOTAL : ${workProvider.work.total_item} item',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                    Text(workProvider.work.tonase_kirim,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16))
+                                  ],
+                                ),
+                                SizedBox(height: 40),
+                              ]),
+                        ))),
+              ));
   }
 }

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 
 class TodayTrip {

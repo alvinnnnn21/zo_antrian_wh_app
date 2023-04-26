@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Area {
   String areaID = "";
   String areaName = "";

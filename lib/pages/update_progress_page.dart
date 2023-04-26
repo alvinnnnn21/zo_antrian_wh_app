@@ -96,7 +96,7 @@ class _UpdateProgressPageState extends State<UpdateProgressPage> {
     //         backgroundColor: Color(0xff00b212),
     //         shape: RoundedRectangleBorder(
     //             borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-    //         duration: Duration(seconds: 3),
+    //         duration: Duration(seconds: 2),
     //         content:
     //             Text("Berhasil Update Progress", textAlign: TextAlign.center)));
 
@@ -107,7 +107,7 @@ class _UpdateProgressPageState extends State<UpdateProgressPage> {
     //         backgroundColor: Color(0xffff0000),
     //         shape: RoundedRectangleBorder(
     //             borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-    //         duration: Duration(seconds: 3),
+    //         duration: Duration(seconds: 2),
     //         content: Text(response, textAlign: TextAlign.center)));
     //   }
     // }
@@ -129,7 +129,7 @@ class _UpdateProgressPageState extends State<UpdateProgressPage> {
     //         backgroundColor: Color(0xff00b212),
     //         shape: RoundedRectangleBorder(
     //             borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-    //         duration: Duration(seconds: 3),
+    //         duration: Duration(seconds: 2),
     //         content: Text("Berhasil Hapus Rute", textAlign: TextAlign.center)));
 
     //     Navigator.popAndPushNamed(context, "/work-in-progress",
@@ -139,7 +139,7 @@ class _UpdateProgressPageState extends State<UpdateProgressPage> {
     //         backgroundColor: Color(0xffff0000),
     //         shape: RoundedRectangleBorder(
     //             borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
-    //         duration: Duration(seconds: 3),
+    //         duration: Duration(seconds: 2),
     //         content: Text(response, textAlign: TextAlign.center)));
     //   }
     // }

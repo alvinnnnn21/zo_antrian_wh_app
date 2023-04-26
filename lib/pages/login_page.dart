@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:sutindo_supir_app/api.dart';
 import 'package:sutindo_supir_app/providers/auth_provider.dart';
 import 'package:sutindo_supir_app/widgets/button_widget.dart';
 import 'package:sutindo_supir_app/widgets/input_widget.dart';
@@ -63,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       if (response == true) {
-        Navigator.pushNamed(context, "/home");
+        Navigator.popAndPushNamed(context, "/home");
       } else {
         setState(() {
           isError = true;

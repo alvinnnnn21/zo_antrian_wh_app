@@ -25,7 +25,7 @@ class PengeluaranProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      return e.toString().replaceAll("Exception:", "");
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 }

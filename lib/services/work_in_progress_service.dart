@@ -2,10 +2,8 @@
 
 import 'dart:convert';
 
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:sutindo_supir_app/api.dart';
-import 'package:sutindo_supir_app/models/lokasi_model.dart';
 import 'package:sutindo_supir_app/models/pocket_money_model.dart';
 import 'package:sutindo_supir_app/models/sj_model.dart';
 import 'package:sutindo_supir_app/models/task_item_model.dart';
@@ -35,6 +33,8 @@ class WorkInProgressService {
     var body = {"id": id.toString(), "id_area": API.getArea()};
     var headers = {'Authorization': 'Bearer $token'};
 
+    print("123");
+
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 
@@ -43,6 +43,15 @@ class WorkInProgressService {
 
       List<Task> list_task = [];
       List<PocketMoney> list_pocket_money = [];
+
+      if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
+      }
 
       for (var i = 0; i < data["uang_saku"].length; i++) {
         var saku = data["uang_saku"][i];
@@ -139,6 +148,7 @@ class WorkInProgressService {
         "total_berat": data["total_tonase"].toString(),
         "total_saldo": data["sisa_saldo"].toString(),
         "total_pengeluaran": data["total_pengeluaran"].toString(),
+        "is_null_jka": data["jka"] == null ? true : false
       });
 
       return work;
@@ -169,6 +179,13 @@ class WorkInProgressService {
 
       if (data["status"] == 200) {
         return true;
+      } else if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
       } else {
         throw Exception(data["message"]);
       }
@@ -204,6 +221,13 @@ class WorkInProgressService {
 
       if (data["status"] == 200) {
         return true;
+      } else if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
       } else {
         throw Exception(data["message"]);
       }
@@ -231,11 +255,20 @@ class WorkInProgressService {
     var response =
         await http.post(Uri.parse(url), body: body, headers: headers);
 
+    print(jsonDecode(response.body));
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
 
       if (data["status"] == 200) {
         return true;
+      } else if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
       } else {
         throw Exception(data["message"]);
       }
@@ -262,6 +295,17 @@ class WorkInProgressService {
         await http.post(Uri.parse(url), body: body, headers: headers);
 
     if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+
+      if (data["status"] == 401) {
+        final storage = GetStorage();
+
+        storage.remove("token");
+        storage.remove("name");
+        storage.remove("id");
+        throw Exception("401");
+      }
+
       return true;
     } else {
       throw Exception;

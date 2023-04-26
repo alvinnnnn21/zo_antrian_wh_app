@@ -14,7 +14,7 @@ class TodayTripProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> GetTodayTrip({required String token}) async {
+  Future<dynamic> GetTodayTrip({required String token}) async {
     try {
       TodayTrip today = await TodayTripService().GetTodayTrip(token: token);
 
@@ -24,7 +24,7 @@ class TodayTripProvider with ChangeNotifier {
 
       return true;
     } catch (e) {
-      return false;
+      return e.toString().replaceAll("Exception: ", "");
     }
   }
 }

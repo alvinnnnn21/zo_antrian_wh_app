@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:provider/provider.dart';
-import 'package:sutindo_supir_app/providers/menu_provider.dart';
 import 'package:sutindo_supir_app/providers/today_trip_provider.dart';
 import 'package:sutindo_supir_app/theme.dart';
 import 'package:sutindo_supir_app/widgets/label_widget.dart';
@@ -27,8 +26,29 @@ class _TodayTripPageState extends State<TodayTripPage> {
 
   getInit() async {
     final String token = storage.read("token");
-    await Provider.of<TodayTripProvider>(context, listen: false)
-        .GetTodayTrip(token: token);
+    dynamic response =
+        await Provider.of<TodayTripProvider>(context, listen: false)
+            .GetTodayTrip(token: token);
+
+    if (response != true) {
+      if (response == "401") {
+        Navigator.pushNamedAndRemoveUntil(context, "/login", (route) => false);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text("Token expired, silahkan login kembali",
+                textAlign: TextAlign.center)));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            backgroundColor: Color(0xffff0000),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(8))),
+            duration: Duration(seconds: 2),
+            content: Text(response, textAlign: TextAlign.center)));
+      }
+    }
 
     setState(() {
       isLoading = false;
