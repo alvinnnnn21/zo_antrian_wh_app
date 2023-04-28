@@ -14,6 +14,7 @@ class AuthService {
       "userid": username,
       'password': password,
       "key": API.apiKey,
+      "id_area": API.getArea()
     };
 
     var response = await http.post(Uri.parse(url), body: body);
